@@ -61,7 +61,7 @@ def getPredictLabel(dataSetPath,jsonPath):
     # create model
     model = eca_mobilenet_v2(num_classes=23).to(device)
     # load model weights
-    model_weight_path = "./Eca_MobileNetV2.pth"
+    model_weight_path = "./Eca_SAM_MobileNetV2_NAdam.pth"
     model.load_state_dict(torch.load(model_weight_path, map_location=device))
     model.eval()
     txtFile = open('predictLabel.txt','w')

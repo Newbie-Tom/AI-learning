@@ -16,8 +16,8 @@ class Ecsam(nn.Module):
         self.spatial_attention = SpatialAttention(kernel_size=kernel_size)
 
     def forward(self,x):
-        x = self.channel_attention(x)
-        x = self.spatial_attention(x)
+        x = self.channel_attention(x)*x
+        x = self.spatial_attention(x)*x
         return x
 
 class ConvBNReLU(nn.Sequential):

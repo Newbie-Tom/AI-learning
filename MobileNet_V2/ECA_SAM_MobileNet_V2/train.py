@@ -14,8 +14,8 @@ def main():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
     print("using {} device.".format(device))
 
-    batch_size = 16
-    epochs = 50
+    batch_size = 32
+    epochs = 100
 
     data_transform = {
         "train": transforms.Compose([transforms.RandomResizedCrop(224),
@@ -61,24 +61,24 @@ def main():
     # create model
     net = eca_mobilenet_v2(num_classes=23)
 
-    # load pretrain weights
-    # download url: https://download.pytorch.org/models/mobilenet_v2-b0353104.pth
-    model_weight_path = "./eca_mobilenetv2_k13.pth.tar"
-    assert os.path.exists(model_weight_path), "file {} dose not exist.".format(model_weight_path)
-    checkPoint = torch.load(model_weight_path, map_location='cpu')
-    pre_weights = checkPoint['state_dict']
-    new_pre_weights = OrderedDict()
-    # remove module in 'state_dict'
-    for k,v in pre_weights.items():
-        name = k[7:]    #remove 'module'
-        new_pre_weights[name] = v
-    # delete classifier weights
-    pre_dict = {k: v for k, v in new_pre_weights.items() if net.state_dict()[k].numel() == v.numel()}
-    missing_keys, unexpected_keys = net.load_state_dict(pre_dict, strict=False)
-
-    # freeze features weights
-    for param in net.features.parameters():
-        param.requires_grad = False
+    # # load pretrain weights
+    # # download url: https://download.pytorch.org/models/mobilenet_v2-b0353104.pth
+    # model_weight_path = "./eca_mobilenetv2_k13.pth.tar"
+    # assert os.path.exists(model_weight_path), "file {} dose not exist.".format(model_weight_path)
+    # checkPoint = torch.load(model_weight_path, map_location='cpu')
+    # pre_weights = checkPoint['state_dict']
+    # new_pre_weights = OrderedDict()
+    # # remove module in 'state_dict'
+    # for k,v in pre_weights.items():
+    #     name = k[7:]    #remove 'module'
+    #     new_pre_weights[name] = v
+    # # delete classifier weights
+    # pre_dict = {k: v for k, v in new_pre_weights.items() if net.state_dict()[k].numel() == v.numel()}
+    # missing_keys, unexpected_keys = net.load_state_dict(pre_dict, strict=False)
+    #
+    # # freeze features weights
+    # for param in net.features.parameters():
+    #     param.requires_grad = False
 
     net.to(device)
 
@@ -86,11 +86,12 @@ def main():
     loss_function = nn.CrossEntropyLoss()
 
     # construct an optimizer
-    params = [p for p in net.parameters() if p.requires_grad]
-    optimizer = optim.Adam(params, lr=0.0001)
+    # params = [p for p in net.parameters() if p.requires_grad]
+    # optimizer = optim.Adam(params, lr=0.0001)
+    optimizer = optim.Adam(net.parameters(), lr=0.0001)
 
     best_acc = 0.0
-    save_path = './Eca_MobileNetV2.pth'
+    save_path = './Eca_Sam_MobileNetV2.pth'
     train_steps = len(train_loader)
     for epoch in range(epochs):
         # train

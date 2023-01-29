@@ -60,7 +60,6 @@ def main():
 
     # create model
     net = MobileNetV2(num_classes=23)
-    net = torch.nn.Module
 
     # # load pretrain weights
     # # download url: https://download.pytorch.org/models/mobilenet_v2-b0353104.pth
@@ -87,7 +86,7 @@ def main():
     optimizer = optim.Adam(net.parameters(), lr=0.0001)
 
     best_acc = 0.0
-    save_path = './MobileNetV2_NoneInitial.pth'
+    save_path = './MobileNetV2.pth'
     train_steps = len(train_loader)
     for epoch in range(epochs):
         # train
